@@ -134,8 +134,8 @@ const run = async () => {
         core.setOutput('url', targetUrl);
 
         // Wait for url to respond with a sucess
-        console.log(`Waiting for a status code 200 from: ${targetUrl}`);
-        await waitForUrl({ url: targetUrl, maxTimeout: MAX_TIMEOUT, checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS });
+        // console.log(`Waiting for a status code 200 from: ${targetUrl}`);
+        // await waitForUrl({ url: targetUrl, maxTimeout: MAX_TIMEOUT, checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS });
 
     } catch (error) {
         core.setFailed(error.message);
