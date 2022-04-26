@@ -58,7 +58,9 @@ const waitForStatus = async ({
 
         } catch (e) {
             console.log("Deployment unavailable or not successful, retrying...");
-            console.log(e)
+            if (DEBUG) {
+                console.log(e)
+            }
             await new Promise(r => setTimeout(r, checkIntervalInMilliseconds));
         }
     }
@@ -74,6 +76,7 @@ const run = async () => {
         const MAX_TIMEOUT = Number(core.getInput("max_timeout")) || 60;
         const ALLOW_INACTIVE = Boolean(core.getInput("allow_inactive")) || false;
         const CHECK_INTERVAL_IN_MS = (Number(core.getInput('check_interval')) || 2) * 1000;
+        const DEBUG = Boolean(core.getInput('debug')) || false
 
         // Fail if we have don't have a github token
         if (!GITHUB_TOKEN) {
@@ -105,6 +108,11 @@ const run = async () => {
         // Get Ref from pull request
         const prSHA = currentPR.data.head.sha
 
+        if (DEBUG) {
+            console.log('PR info')
+            console.log(JSON.stringify(currentPR, null, 2))
+        }
+
         // Get deployments associated with the pull request
         const deployments = await octokit.rest.repos.listDeployments({
             owner,
@@ -113,7 +121,16 @@ const run = async () => {
             environment: ENVIRONMENT
         })
 
+        if (DEBUG) {
+            console.log(`Found ${deployments.data.length} deployments`)
+        }
+
         const deployment = deployments.data.length > 0 && deployments.data[0];
+
+        if (DEBUG) {
+            console.log('Deployment info: ')
+            console.log(JSON.stringify(deployment))
+        }
 
         const status = await waitForStatus({
             owner,
@@ -127,6 +144,11 @@ const run = async () => {
 
         // Get target url
         const targetUrl = status.target_url
+
+        if (DEBUG) {
+            console.log('Deployment status')
+            console.log(JSON.stringify(status))
+        }
 
         console.log('target url »', targetUrl)
 
