@@ -58,9 +58,7 @@ const waitForStatus = async ({
 
         } catch (e) {
             console.log("Deployment unavailable or not successful, retrying...");
-            if (DEBUG) {
-                console.log(e)
-            }
+            console.log(e)
             await new Promise(r => setTimeout(r, checkIntervalInMilliseconds));
         }
     }
@@ -122,14 +120,14 @@ const run = async () => {
         })
 
         if (DEBUG) {
-            console.log(`Found ${deployments.data.length} deployments`)
+            console.log(`\n\nFound ${deployments.data.length} deployments`)
         }
 
         const deployment = deployments.data.length > 0 && deployments.data[0];
 
         if (DEBUG) {
-            console.log('Deployment info: ')
-            console.log(JSON.stringify(deployment))
+            console.log('\n\nDeployment info: ')
+            console.log(JSON.stringify(deployment, null, 2))
         }
 
         const status = await waitForStatus({
